@@ -14,6 +14,7 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
@@ -30,6 +31,8 @@ bool firstMouse = true;
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+float freezeFrame = 0.0f;
+bool timeStop = false;
 
 int main()
 {
@@ -56,6 +59,7 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetKeyCallback(window, key_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
     // tell GLFW to capture our mouse
@@ -79,7 +83,7 @@ int main()
 
     // load models
     // -----------
-    Model ourModel("resources/objects/zack/Zack.obj");
+    Model ourModel("resources/objects/remilia/remilia.obj");
 
     // render loop
     // -----------
@@ -88,8 +92,12 @@ int main()
         // per-frame time logic
         // --------------------
         float currentFrame = static_cast<float>(glfwGetTime());
+
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+        if (!timeStop) {
+            freezeFrame = currentFrame;
+        }
 
         // input
         // -----
@@ -97,21 +105,29 @@ int main()
 
         // render
         // ------
-        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //configure transform 
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 1.0f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+        model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
         ourShader.use();
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
         ourShader.setMat4("model", model);
 
-        ourShader.setFloat("time", static_cast<float>(glfwGetTime()));
+        if (timeStop == true) {
+            ourShader.setFloat("time", freezeFrame);
+        }
+        else {
+            ourShader.setFloat("time", static_cast<float>(glfwGetTime()));
+        }
+
         ourModel.Draw(ourShader);
 
 
@@ -174,6 +190,17 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
     lastY = ypos;
 
     camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_P && action == GLFW_PRESS) {
+        if (timeStop) {
+            timeStop = false;
+        }
+        else {
+            timeStop = true;
+        }
+    }
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
