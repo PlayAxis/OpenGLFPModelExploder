@@ -31,6 +31,10 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+//Explosion settings
+bool explodeStart = false;
+bool shatterStart = false;
+
 int main()
 {
     // glfw: initialize and configure
@@ -81,6 +85,11 @@ int main()
     // -----------
     Model ourModel("resources/objects/zack/Zack.obj");
 
+    //Initialize explosion parameters
+    ourShader.setInt("exploding", 0);
+    ourShader.setInt("shattering", 0);
+    ourShader.setFloat("minY", -5.0);
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -95,6 +104,19 @@ int main()
         // -----
         processInput(window);
 
+        //Check explode inputs and start explosion if true
+        if (explodeStart) {
+            shatterStart = false;
+            ourShader.setInt("exploding", 1);
+        }
+        else if (shatterStart) {
+            ourShader.setInt("shattering", 1);
+        }
+        else {
+            ourShader.setInt("exploding", 0);
+            ourShader.setInt("shattering", 0);
+        }
+
         // render
         // ------
         glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
@@ -104,8 +126,8 @@ int main()
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 1.0f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+        model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
         ourShader.use();
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
@@ -142,6 +164,18 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
+        if (glfwGetTime() > 1) {
+            explodeStart = !explodeStart;
+            glfwSetTime(0.0);
+        }
+    }
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
+        if (glfwGetTime() > 1) {
+            shatterStart = !shatterStart;
+            glfwSetTime(0.0);
+        }
+    }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
