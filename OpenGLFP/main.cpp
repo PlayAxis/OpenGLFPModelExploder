@@ -92,7 +92,7 @@ int main()
     //Initialize explosion parameters
     ourShader.setInt("exploding", 0);
     ourShader.setInt("shattering", 0);
-    ourShader.setFloat("minY", -5.0);
+    ourShader.setFloat("minY", -100.0);
 
     // render loop
     // -----------
