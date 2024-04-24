@@ -1,13 +1,12 @@
-
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <stb_image.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <shader_m.h>
+#include <shader.h>
 #include <camera.h>
 #include <model.h>
 
@@ -47,7 +46,7 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Model Exploder", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -70,24 +69,17 @@ int main()
         return -1;
     }
 
-    // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-    stbi_set_flip_vertically_on_load(true);
-
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
 
     // build and compile shaders
     // -------------------------
-    Shader ourShader("shader.vs", "shader.fs");
+    Shader ourShader("shader.vs", "shader.fs", "gshader.gs");
 
     // load models
     // -----------
-    Model ourModel("resources/objects/backpack/backpack.obj");
-
-
-    // draw in wireframe
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    Model ourModel("resources/objects/zack/Zack.obj");
 
     // render loop
     // -----------
@@ -108,20 +100,18 @@ int main()
         glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // don't forget to enable shader before setting uniforms
-        ourShader.use();
-
-        // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        //configure transform 
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 1.0f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
-        ourShader.setMat4("projection", projection);
-        ourShader.setMat4("view", view);
-
-        // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+        model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+        ourShader.use();
+        ourShader.setMat4("projection", projection);
+        ourShader.setMat4("view", view);
         ourShader.setMat4("model", model);
+
+        ourShader.setFloat("time", static_cast<float>(glfwGetTime()));
         ourModel.Draw(ourShader);
 
 

@@ -48,6 +48,7 @@
   <ItemGroup>
     <None Include="shader.vs" />
     <None Include="shader.fs" />
+    <None Include="gshader.gs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="container.jpg">
