@@ -122,6 +122,14 @@ int main()
     susMat = glm::scale(susMat, glm::vec3(0.5f, 0.5f, 0.5f));
     matrixVect.push_back(susMat);
 
+    Model mikuModel("resources/objects/miku/Miku.obj");
+    modelVect.push_back(mikuModel);
+    glm::mat4 mikuMat = glm::mat4(1.0f);
+    mikuMat = glm::rotate(mikuMat, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    mikuMat = glm::translate(mikuMat, glm::vec3(-0.05f, -1.9f, -0.3f)); // translate it down so it's at the center of the scene
+    mikuMat = glm::scale(mikuMat, glm::vec3(0.01f, 0.01f, 0.01f));
+    matrixVect.push_back(mikuMat);
+
     //Initialize explosion parameters
     ourShader.setInt("exploding", 0);
     ourShader.setInt("shattering", 0);
