@@ -158,6 +158,13 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+
+    if (timeStop) {
+        if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS)
+            freezeFrame += deltaTime;
+        if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS)
+            freezeFrame -= deltaTime;
+    }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
