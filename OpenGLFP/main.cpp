@@ -87,6 +87,9 @@ int main()
 
     // load models
     // -----------
+
+    //Zack Model
+    //Model ourModel("resources/objects/zack/zack.obj");
     Model ourModel("resources/objects/remilia/remilia.obj");
 
     //Initialize explosion parameters
@@ -128,14 +131,18 @@ int main()
         // render
         // ------
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //configure transform 
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 1.0f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 model = glm::mat4(1.0f);
+        //Comment following for zack
         model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+        //End comment
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
         ourShader.use();
