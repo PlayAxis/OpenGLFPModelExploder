@@ -34,6 +34,11 @@ float lastFrame = 0.0f;
 float freezeFrame = 0.0f;
 bool timeStop = false;
 
+// models
+vector<Model> modelVect;
+vector<glm::mat4> matrixVect;
+int modelNum = 0;
+
 //Explosion settings
 bool explodeStart = false;
 bool shatterStart = false;
@@ -87,7 +92,28 @@ int main()
 
     // load models
     // -----------
-    Model ourModel("resources/objects/remilia/remilia.obj");
+    Model fumoModel("resources/objects/remilia/remilia.obj");
+    modelVect.push_back(fumoModel);
+    glm::mat4 fumoMat = glm::mat4(1.0f);
+    fumoMat = glm::rotate(fumoMat, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    fumoMat = glm::rotate(fumoMat, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    fumoMat = glm::translate(fumoMat, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+    fumoMat = glm::scale(fumoMat, glm::vec3(0.05f, 0.05f, 0.05f));
+    matrixVect.push_back(fumoMat);
+
+    Model zackModel("resources/objects/zack/Zack.obj");
+    modelVect.push_back(zackModel);
+    glm::mat4 zackMat = glm::mat4(1.0f);
+    zackMat = glm::translate(zackMat, glm::vec3(0.0f, -0.9f, 0.0f)); // translate it down so it's at the center of the scene
+    zackMat = glm::scale(zackMat, glm::vec3(0.01f, 0.01f, 0.01f));
+    matrixVect.push_back(zackMat);
+
+    Model backModel("resources/objects/backpack/backpack.obj");
+    modelVect.push_back(backModel);
+    glm::mat4 backMat = glm::mat4(1.0f);
+    backMat = glm::translate(backMat, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+    backMat = glm::scale(backMat, glm::vec3(0.3f, 0.3f, 0.3f));
+    matrixVect.push_back(backMat);
 
     //Initialize explosion parameters
     ourShader.setInt("exploding", 0);
@@ -134,10 +160,9 @@ int main()
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 1.0f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
+
+        model = matrixVect[modelNum];
+
         ourShader.use();
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
@@ -150,7 +175,7 @@ int main()
             ourShader.setFloat("time", static_cast<float>(glfwGetTime()));
         }
 
-        ourModel.Draw(ourShader);
+        modelVect[modelNum].Draw(ourShader);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -241,6 +266,19 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         }
         else {
             timeStop = true;
+        }
+    }
+
+    if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+        modelNum++;
+        if(modelNum >= modelVect.size()) {
+            modelNum = 0;
+        }
+    }
+    if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+        modelNum--;
+        if(modelNum < 0) {
+            modelNum = modelVect.size() - 1;
         }
     }
 }
