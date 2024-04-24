@@ -115,6 +115,13 @@ int main()
     backMat = glm::scale(backMat, glm::vec3(0.3f, 0.3f, 0.3f));
     matrixVect.push_back(backMat);
 
+    Model susModel("resources/objects/sus/WhenTheImposterIsSus.obj");
+    modelVect.push_back(susModel);
+    glm::mat4 susMat = glm::mat4(1.0f);
+    susMat = glm::translate(susMat, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+    susMat = glm::scale(susMat, glm::vec3(0.5f, 0.5f, 0.5f));
+    matrixVect.push_back(susMat);
+
     //Initialize explosion parameters
     ourShader.setInt("exploding", 0);
     ourShader.setInt("shattering", 0);
