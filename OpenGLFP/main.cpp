@@ -153,7 +153,7 @@ int main()
         processInput(window);
 
         //Check explode inputs and start explosion if true
-        ourShader.setFloat("test", -0.5f);
+        ourShader.setFloat("minY", -0.5f);
         if (explodeStart) {
             shatterStart = false;
             ourShader.setInt("exploding", 1);

@@ -12,7 +12,7 @@ in VS_OUT {
 out vec2 TexCoords;
 
 uniform float time;
-uniform float test;
+uniform float minY;
 
 uniform int exploding;
 uniform int shattering;
@@ -26,12 +26,9 @@ vec4 shatter(vec4 position, vec3 normal) {
 	float magnitude = -1.0;
 	vec3 direction = ((normal/2) + vec3(0.0, magnitude, 0.0)) * (time / 2.0);
 	vec4 finalPosition = position + vec4(direction, 0.0);
-	if(finalPosition.y < test){
-		finalPosition.y = test;
+	if(finalPosition.y < minY){
+		finalPosition.y = minY;
 	}
-	vec3 direction = ((normal) + vec3(0.0, magnitude, 0.0)) * (time / 2.0);
-	vec4 finalPosition = position + vec4(direction, 0.0);
-
 	return finalPosition;
 }
 
