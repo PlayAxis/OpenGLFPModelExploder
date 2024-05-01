@@ -12,10 +12,10 @@ in VS_OUT {
 out vec2 TexCoords;
 
 uniform float time;
+uniform float test;
 
 uniform int exploding;
 uniform int shattering;
-uniform float minY;
 
 vec4 explode(vec4 position, vec3 normal) {
 	vec3 direction = normal * (time / 2.0) * -1;
@@ -25,9 +25,9 @@ vec4 explode(vec4 position, vec3 normal) {
 vec4 shatter(vec4 position, vec3 normal) {
 	float magnitude = -1.0;
 	vec3 direction = ((normal/2) + vec3(0.0, magnitude, 0.0)) * (time / 2.0);
-	vec4 finalPosition = position + vec4(direction, 1.0);
-	if(finalPosition.y < minY){
-		finalPosition.y = minY;
+	vec4 finalPosition = position + vec4(direction, 0.0);
+	if(finalPosition.y < test){
+		finalPosition.y = test;
 	}
 	return finalPosition;
 }
@@ -59,7 +59,7 @@ void main(){
 		gl_Position = gs_in[1].vProjection * gs_in[1].vView * shatter(gl_in[1].gl_Position, normal);
 		TexCoords = gs_in[1].texCoords;
 		EmitVertex();
-		gl_Position = gs_in[2].vProjection * gs_in[2].vView * shatter(gl_in[2].gl_Position, normal);
+		gl_Position = gs_in[2].vProjection * gs_in[1].vView * shatter(gl_in[2].gl_Position, normal);
 		TexCoords = gs_in[2].texCoords;
 		EmitVertex();
 		EndPrimitive();
