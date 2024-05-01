@@ -29,6 +29,9 @@ vec4 shatter(vec4 position, vec3 normal) {
 	if(finalPosition.y < test){
 		finalPosition.y = test;
 	}
+	vec3 direction = ((normal) + vec3(0.0, magnitude, 0.0)) * (time / 2.0);
+	vec4 finalPosition = position + vec4(direction, 0.0);
+
 	return finalPosition;
 }
 
